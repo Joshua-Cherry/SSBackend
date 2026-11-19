@@ -1,0 +1,26 @@
+# /etc/systemd/system/incident-app.service
+[Unit]
+Description=Incident reporting app (Axum)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=incidentapp
+Group=incidentapp
+WorkingDirectory=/opt/incident-app
+ExecStart=/opt/incident-app/incident-app
+Environment=AWS_REGION=us-east-2
+Environment=APP_SECRET_ID=incident-app/config
+Environment=BIND_ADDR=127.0.0.1:3000
+Environment=LOG_DIR=/var/log/incident-app
+Environment=RUST_LOG=info
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/log/incident-app
+
+[Install]
+WantedBy=multi-user.target
