@@ -145,22 +145,3 @@ Without `APP_SECRET_ID`, the app reads `DATABASE_URL` and logs to the console:
 ```bash
 DATABASE_URL=postgres://app_user:<pw>@localhost/incidents cargo run
 ```
-
-## Requirement mapping
-
-| Requirement | Where |
-| --- | --- |
-| FR-1–FR-3, SR-6 | `routes/admin.rs` (`create_user`, `update_user`, self-edit blocked) |
-| FR-4, FR-5 | `routes/account.rs` (`login`, `logout` deletes the server-side session) |
-| FR-6–FR-10 | `routes/incidents.rs` (role-scoped list, `can_view`) |
-| FR-11, FR-12, SR-10, SR-11 | `audit.rs` + DB triggers; `/api/admin/audit/verify` |
-| SR-1, SR-4, SR-5 | `AuthUser` extractor re-checks session and role on every request |
-| SR-2 | Argon2id in `auth.rs` |
-| SR-3 | `__Host-session` cookie: Secure, HttpOnly, SameSite=Strict; only its SHA-256 stored |
-| SR-7 | `validate.rs` + DB CHECK constraints; `deny_unknown_fields` on every body |
-| SR-8 | Every query uses `$n` bind parameters |
-| SR-9, SR-12, SR-13 | `error.rs`: generic messages to users, details to `app.log`; no secrets logged |
-| SR-14 | `config.rs`: credentials from Secrets Manager via the instance role |
-| NFR-3, NFR-4 | Argon2 off the async threads; 10-connection pool |
-| NFR-5 | Transactions; optimistic locking on incident status; `FOR UPDATE` on user edits |
-| NFR-6 | `CatchPanicLayer`, systemd `Restart=on-failure`, graceful shutdown |
